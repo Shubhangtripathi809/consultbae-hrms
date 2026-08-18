@@ -8,124 +8,63 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "webhook-trigger",
+      "id": "1",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
-        "operation": "toJson",
-        "options": {}
+        "jsCode": "const body = $input.all()[0].json.body;\nconst DB = [{\"name\": \"Tanvi Gupta\", \"email\": \"tanvi.gupta31@example.com\", \"phone\": \"9000000254\"}, {\"name\": \"Manish Reddy\", \"email\": \"manish.reddy73@example.com\", \"phone\": \"9000000237\"}, {\"name\": \"Priya Singh\", \"email\": \"priya.singh61@mailtest.example.org\", \"phone\": \"9000000287\"}, {\"name\": \"Vikram Saxena\", \"email\": \"vikram.saxena60@example.com\", \"phone\": \"9000000113\"}, {\"name\": \"Amit Agarwal\", \"email\": \"amit.agarwal3@mailtest.example.org\", \"phone\": \"9000000288\"}, {\"name\": \"Sahil Malhotra\", \"email\": \"sahil.malhotra1@example.in\", \"phone\": \"9000000143\"}, {\"name\": \"Shreya Gupta\", \"email\": \"shreya.gupta85@example.com\", \"phone\": \"9000000227\"}, {\"name\": \"Isha Chopra\", \"email\": \"isha.chopra95@mailtest.example.org\", \"phone\": \"9000000138\"}, {\"name\": \"Priya Nair\", \"email\": \"priya.nair70@example.com\", \"phone\": \"9000000222\"}, {\"name\": \"Rohit Mishra\", \"email\": \"rohit.mishra70@mailtest.example.org\", \"phone\": \"9000000167\"}, {\"name\": \"Rahul Malhotra\", \"email\": \"rahul.malhotra69@mailtest.example.org\", \"phone\": \"9000000260\"}, {\"name\": \"Rahul Jain\", \"email\": \"rahul.jain34@example.in\", \"phone\": \"9000000114\"}, {\"name\": \"Nikhil Malhotra\", \"email\": \"nikhil.malhotra41@example.in\", \"phone\": \"9000000145\"}, {\"name\": \"Karan Bhatia\", \"email\": \"karan.bhatia32@mailtest.example.org\", \"phone\": \"9000000211\"}, {\"name\": \"Ritu Sharma\", \"email\": \"ritu.sharma23@mailtest.example.org\", \"phone\": \"9000000146\"}, {\"name\": \"Arjun Mishra\", \"email\": \"arjun.mishra70@example.com\", \"phone\": \"9000000106\"}, {\"name\": \"Meera Bhatia\", \"email\": \"meera.bhatia52@mailtest.example.org\", \"phone\": \"9000000223\"}, {\"name\": \"Varun Jain\", \"email\": \"varun.jain29@example.com\", \"phone\": \"9000000263\"}, {\"name\": \"Arjun Mehta\", \"email\": \"arjun.mehta9@example.in\", \"phone\": \"9000000131\"}, {\"name\": \"Kavya Mehta\", \"email\": \"kavya.mehta7@example.com\", \"phone\": \"9000000177\"}, {\"name\": \"Sneha Chopra\", \"email\": \"sneha.chopra99@example.in\", \"phone\": \"9000000162\"}, {\"name\": \"Deepak Mehta\", \"email\": \"deepak.mehta86@example.in\", \"phone\": \"9000000116\"}, {\"name\": \"Pooja Gupta\", \"email\": \"pooja.gupta57@mailtest.example.org\", \"phone\": \"9000000271\"}, {\"name\": \"Rohit Verma\", \"email\": \"rohit.verma13@mailtest.example.org\", \"phone\": \"9000000294\"}, {\"name\": \"Sneha Mishra\", \"email\": \"sneha.mishra14@mailtest.example.org\", \"phone\": \"9000000229\"}, {\"name\": \"Nikhil Chopra\", \"email\": \"alt.nikhil.chopra70@example.com\", \"phone\": \"9000000103\"}, {\"name\": \"Priya Saxena\", \"email\": \"priya.saxena61@example.com\", \"phone\": \"9000000231\"}, {\"name\": \"Varun Saxena\", \"email\": \"varun.saxena21@example.in\", \"phone\": \"9000000170\"}, {\"name\": \"Gaurav Mehta\", \"email\": \"gaurav.mehta79@mailtest.example.org\", \"phone\": \"9000000133\"}, {\"name\": \"Rohit Nair\", \"email\": \"rohit.nair32@mailtest.example.org\", \"phone\": \"9000000268\"}, {\"name\": \"Deepak Nair\", \"email\": \"deepak.nair44@example.com\", \"phone\": \"9000000296\"}, {\"name\": \"Rahul Chopra\", \"email\": \"rahul.chopra70@example.com\", \"phone\": \"9000000137\"}, {\"name\": \"Deepak Singh\", \"email\": \"deepak.singh36@mailtest.example.org\", \"phone\": \"9000000202\"}, {\"name\": \"Amit Reddy\", \"email\": \"amit.reddy9@mailtest.example.org\", \"phone\": \"9000000165\"}, {\"name\": \"Nikhil Chopra\", \"email\": \"nikhil.chopra70@example.com\", \"phone\": \"9000000103\"}, {\"name\": \"Tanvi Agarwal\", \"email\": \"tanvi.agarwal97@example.in\", \"phone\": \"9000000148\"}, {\"name\": \"Nikhil Mehta\", \"email\": \"nikhil.mehta5@example.com\", \"phone\": \"9000000104\"}, {\"name\": \"Isha Kapoor\", \"email\": \"isha.kapoor54@example.com\", \"phone\": \"9000000295\"}, {\"name\": \"Arjun Bhatia\", \"email\": \"arjun.bhatia14@example.com\", \"phone\": \"9000000212\"}, {\"name\": \"Isha Sharma\", \"email\": \"isha.sharma15@example.com\", \"phone\": \"9000000259\"}, {\"name\": \"Neha Bhatia\", \"email\": \"neha.bhatia60@mailtest.example.org\", \"phone\": \"9000000273\"}, {\"name\": \"Arjun Mehta\", \"email\": \"arjun.mehta77@mailtest.example.org\", \"phone\": \"\"}, {\"name\": \"Manish Bhatia\", \"email\": \"manish.bhatia3@example.com\", \"phone\": \"\"}, {\"name\": \"Divya Chopra\", \"email\": \"divya.chopra59@example.in\", \"phone\": \"\"}, {\"name\": \"Karan Chopra\", \"email\": \"karan.chopra76@mailtest.example.org\", \"phone\": \"\"}, {\"name\": \"Vikram Mehta\", \"email\": \"vikram.mehta6@example.com\", \"phone\": \"\"}, {\"name\": \"Pooja Kapoor\", \"email\": \"pooja.kapoor62@example.in\", \"phone\": \"\"}, {\"name\": \"Kavya Verma\", \"email\": \"kavya.verma74@mailtest.example.org\", \"phone\": \"\"}, {\"name\": \"Tanvi Reddy\", \"email\": \"tanvi.reddy80@example.com\", \"phone\": \"\"}, {\"name\": \"Varun Singh\", \"email\": \"varun.singh81@example.com\", \"phone\": \"\"}, {\"name\": \"Tanvi Kapoor\", \"email\": \"tanvi.kapoor38@example.com\", \"phone\": \"\"}, {\"name\": \"Nikhil Nair\", \"email\": \"nikhil.nair26@example.in\", \"phone\": \"\"}, {\"name\": \"Pooja Reddy\", \"email\": \"pooja.reddy96@mailtest.example.org\", \"phone\": \"\"}, {\"name\": \"Tanvi Sharma\", \"email\": \"tanvi.sharma56@mailtest.example.org\", \"phone\": \"\"}, {\"name\": \"Deepak Nair\", \"email\": \"deepak.nair57@example.in\", \"phone\": \"\"}, {\"name\": \"Anjali Agarwal\", \"email\": \"anjali.agarwal53@mailtest.example.org\", \"phone\": \"\"}, {\"name\": \"Arjun Mehta\", \"email\": \"\", \"phone\": \"9000000272\"}, {\"name\": \"Manish Bhatia\", \"email\": \"\", \"phone\": \"9000000161\"}, {\"name\": \"Divya Chopra\", \"email\": \"\", \"phone\": \"9000000111\"}, {\"name\": \"Karan Chopra\", \"email\": \"\", \"phone\": \"9000000245\"}, {\"name\": \"Vikram Mehta\", \"email\": \"\", \"phone\": \"9000000261\"}];\n\nconst results = [];\nfor (const raw of body) {\n  const email = (raw.Email || raw.email || raw.email_id || \"\").trim().toLowerCase();\n  let phone = (raw.Phone || raw.phone || raw[\"Phone Number\"] || \"\").toString().replace(/[^0-9]/g, \"\");\n  if (phone.startsWith(\"91\") && phone.length === 12) phone = phone.substring(2);\n  if (phone.startsWith(\"0\") && phone.length === 11) phone = phone.substring(1);\n  const name = raw[\"Full Name\"] || raw.Name || raw.worker_name || \"\";\n\n  const match = DB.find(p =>\n    (email && p.email && p.email === email) ||\n    (phone && p.phone && p.phone === phone)\n  );\n\n  results.push({\n    json: {\n      name: name,\n      email: email,\n      phone: phone,\n      is_duplicate: !!match,\n      matched_with: match ? match.name + \" (\" + match.email + \")\" : null\n    }\n  });\n}\nreturn results;"
       },
-      "id": "csv-parse",
-      "name": "Parse CSV",
-      "type": "n8n-nodes-base.spreadsheetFile",
-      "typeVersion": 2,
-      "position": [460, 300]
-    },
-    {
-      "parameters": {
-        "jsCode": "// Normalize email and phone for matching\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const email = (item.json.Email || item.json.email || item.json.email_id || '').trim().toLowerCase();\n  let phone = (item.json.Phone || item.json.phone || item.json['Phone Number'] || '').toString().replace(/[^0-9]/g, '');\n  \n  // Strip +91 or leading 0\n  if (phone.startsWith('91') && phone.length === 12) phone = phone.substring(2);\n  if (phone.startsWith('0') && phone.length === 11) phone = phone.substring(1);\n  \n  const name = (item.json['Full Name'] || item.json.Name || item.json.worker_name || '').trim();\n  \n  results.push({\n    json: {\n      original_name: name,\n      normalized_email: email,\n      normalized_phone: phone,\n      ...item.json\n    }\n  });\n}\n\nreturn results;"
-      },
-      "id": "normalize",
-      "name": "Normalize Fields",
+      "id": "2",
+      "name": "Check Duplicates",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [680, 300]
+      "position": [
+        480,
+        300
+      ]
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT id, name, email, phone FROM persons WHERE email = '{{ $json.normalized_email }}' OR phone = '{{ $json.normalized_phone }}'",
-        "options": {}
+        "respondWith": "allIncomingItems"
       },
-      "id": "db-lookup",
-      "name": "SQLite Lookup",
-      "type": "n8n-nodes-base.sqlite",
-      "typeVersion": 1,
-      "position": [900, 300],
-      "credentials": {
-        "sqlite": {
-          "id": "1",
-          "name": "ConsultBae DB"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "boolean": [
-            {
-              "value1": "={{ $json.id !== undefined }}",
-              "value2": true
-            }
-          ]
-        }
-      },
-      "id": "if-duplicate",
-      "name": "Is Duplicate?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [1120, 300]
-    },
-    {
-      "parameters": {
-        "fromEmail": "alerts@consultbae.com",
-        "toEmail": "team@consultbae.com",
-        "subject": "⚠️ Duplicate Found: {{ $json.original_name }}",
-        "text": "A duplicate record was detected in the uploaded CSV.\n\nNew record:\n  Name: {{ $json.original_name }}\n  Email: {{ $json.normalized_email }}\n  Phone: {{ $json.normalized_phone }}\n\nMatches existing DB record ID: {{ $json.id }}\n  Name: {{ $json.name }}\n  Email: {{ $json.email }}\n\nPlease review.",
-        "options": {}
-      },
-      "id": "send-email",
-      "name": "Send Duplicate Alert",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2,
-      "position": [1340, 200]
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ status: 'checked', duplicates_found: $('Is Duplicate?').first().json.id !== undefined }) }}"
-      },
-      "id": "respond",
+      "id": "3",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1340, 400]
+      "position": [
+        720,
+        300
+      ]
     }
   ],
   "connections": {
     "Webhook Trigger": {
       "main": [
-        [{ "node": "Parse CSV", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Check Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Parse CSV": {
+    "Check Duplicates": {
       "main": [
-        [{ "node": "Normalize Fields", "type": "main", "index": 0 }]
-      ]
-    },
-    "Normalize Fields": {
-      "main": [
-        [{ "node": "SQLite Lookup", "type": "main", "index": 0 }]
-      ]
-    },
-    "SQLite Lookup": {
-      "main": [
-        [{ "node": "Is Duplicate?", "type": "main", "index": 0 }]
-      ]
-    },
-    "Is Duplicate?": {
-      "main": [
-        [{ "node": "Send Duplicate Alert", "type": "main", "index": 0 }],
-        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }]
-      ]
-    },
-    "Send Duplicate Alert": {
-      "main": [
-        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
