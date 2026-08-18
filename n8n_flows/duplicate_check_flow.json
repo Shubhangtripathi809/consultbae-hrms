@@ -1,0 +1,135 @@
+{
+  "name": "CSV Duplicate Checker",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "check-duplicates",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "id": "csv-parse",
+      "name": "Parse CSV",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize email and phone for matching\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const email = (item.json.Email || item.json.email || item.json.email_id || '').trim().toLowerCase();\n  let phone = (item.json.Phone || item.json.phone || item.json['Phone Number'] || '').toString().replace(/[^0-9]/g, '');\n  \n  // Strip +91 or leading 0\n  if (phone.startsWith('91') && phone.length === 12) phone = phone.substring(2);\n  if (phone.startsWith('0') && phone.length === 11) phone = phone.substring(1);\n  \n  const name = (item.json['Full Name'] || item.json.Name || item.json.worker_name || '').trim();\n  \n  results.push({\n    json: {\n      original_name: name,\n      normalized_email: email,\n      normalized_phone: phone,\n      ...item.json\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "normalize",
+      "name": "Normalize Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, email, phone FROM persons WHERE email = '{{ $json.normalized_email }}' OR phone = '{{ $json.normalized_phone }}'",
+        "options": {}
+      },
+      "id": "db-lookup",
+      "name": "SQLite Lookup",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [900, 300],
+      "credentials": {
+        "sqlite": {
+          "id": "1",
+          "name": "ConsultBae DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.id !== undefined }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-duplicate",
+      "name": "Is Duplicate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "alerts@consultbae.com",
+        "toEmail": "team@consultbae.com",
+        "subject": "⚠️ Duplicate Found: {{ $json.original_name }}",
+        "text": "A duplicate record was detected in the uploaded CSV.\n\nNew record:\n  Name: {{ $json.original_name }}\n  Email: {{ $json.normalized_email }}\n  Phone: {{ $json.normalized_phone }}\n\nMatches existing DB record ID: {{ $json.id }}\n  Name: {{ $json.name }}\n  Email: {{ $json.email }}\n\nPlease review.",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Duplicate Alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'checked', duplicates_found: $('Is Duplicate?').first().json.id !== undefined }) }}"
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [{ "node": "Parse CSV", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse CSV": {
+      "main": [
+        [{ "node": "Normalize Fields", "type": "main", "index": 0 }]
+      ]
+    },
+    "Normalize Fields": {
+      "main": [
+        [{ "node": "SQLite Lookup", "type": "main", "index": 0 }]
+      ]
+    },
+    "SQLite Lookup": {
+      "main": [
+        [{ "node": "Is Duplicate?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is Duplicate?": {
+      "main": [
+        [{ "node": "Send Duplicate Alert", "type": "main", "index": 0 }],
+        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send Duplicate Alert": {
+      "main": [
+        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
