@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConsultBae Audio Collection</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 600px; margin: 40px auto; padding: 20px; }
+        h1 { font-size: 1.5rem; margin-bottom: 4px; }
+        .subtitle { color: #666; margin-bottom: 24px; font-size: 0.9rem; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+        input[type=text], input[type=tel] {
+            width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 1rem; margin-bottom: 16px;
+        }
+        input:focus { outline: none; border-color: #4f46e5; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 0.95rem; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #4f46e5; color: #fff; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #e5e7eb; color: #333; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .recording-area { margin: 16px 0; }
+        .rec-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .rec-status { font-size: 0.85rem; color: #666; margin-top: 8px; }
+        .rec-status.active { color: #ef4444; font-weight: 600; }
+        .or-divider { text-align: center; color: #999; margin: 16px 0; font-size: 0.85rem; }
+        .file-upload { margin-bottom: 16px; }
+        .submit-area { text-align: right; margin-top: 16px; }
+        .result { margin-top: 16px; padding: 16px; border-radius: 8px; font-size: 0.9rem; }
+        .result.success { background: #ecfdf5; border: 1px solid #6ee7b7; }
+        .result.error { background: #fef2f2; border: 1px solid #fca5a5; }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+        .meta-item { font-size: 0.85rem; }
+        .meta-item span { font-weight: 600; }
+        nav { display: flex; gap: 16px; margin-bottom: 20px; }
+        nav a { color: #4f46e5; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="/">Submit Audio</a>
+            <a href="/submissions">View Submissions</a>
+        </nav>
+        <h1>Audio Collection</h1>
+        <p class="subtitle">Record or upload an audio file to submit.</p>
+
+        <div class="card">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="e.g. Tanvi Gupta" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="e.g. 9000000254" required>
+
+            <div class="recording-area">
+                <label>Option 1: Record in Browser</label>
+                <div class="rec-controls">
+                    <button class="btn btn-primary" id="btnRecord" onclick="startRecording()">Start Recording</button>
+                    <button class="btn btn-danger" id="btnStop" onclick="stopRecording()" disabled>Stop</button>
+                </div>
+                <div class="rec-status" id="recStatus"></div>
+                <audio id="audioPreview" controls style="display:none; margin-top:10px; width:100%;"></audio>
+            </div>
+
+            <div class="or-divider">— OR —</div>
+
+            <div class="file-upload">
+                <label for="audioFile">Option 2: Upload Audio File</label>
+                <input type="file" id="audioFile" accept="audio/*">
+            </div>
+
+            <div class="submit-area">
+                <button class="btn btn-primary" id="btnSubmit" onclick="submitAudio()">Submit</button>
+            </div>
+
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordedBlob = null;
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const url = URL.createObjectURL(recordedBlob);
+                    const preview = document.getElementById('audioPreview');
+                    preview.src = url;
+                    preview.style.display = 'block';
+                    document.getElementById('recStatus').textContent = 'Recording saved. Ready to submit.';
+                    document.getElementById('recStatus').className = 'rec-status';
+                };
+
+                mediaRecorder.start();
+                document.getElementById('btnRecord').disabled = true;
+                document.getElementById('btnStop').disabled = false;
+                document.getElementById('recStatus').textContent = '● Recording...';
+                document.getElementById('recStatus').className = 'rec-status active';
+            } catch (err) {
+                alert('Microphone access denied or not available.\nPlease use the file upload option instead.');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            }
+            document.getElementById('btnRecord').disabled = false;
+            document.getElementById('btnStop').disabled = true;
+        }
+
+        async function submitAudio() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const fileInput = document.getElementById('audioFile');
+
+            if (!name || !phone) {
+                showResult('Please enter your name and phone number.', false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('phone', phone);
+
+            if (fileInput.files.length > 0) {
+                formData.append('audio', fileInput.files[0]);
+            } else if (recordedBlob) {
+                // Convert blob to base64
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    const base64 = reader.result.split(',')[1];
+                    formData.append('audio_blob', base64);
+                    await doSubmit(formData);
+                };
+                reader.readAsDataURL(recordedBlob);
+                return;
+            } else {
+                showResult('Please record or upload an audio file first.', false);
+                return;
+            }
+
+            await doSubmit(formData);
+        }
+
+        async function doSubmit(formData) {
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                const resp = await fetch('/api/submit', { method: 'POST', body: formData });
+                const data = await resp.json();
+
+                if (data.success) {
+                    const m = data.metadata;
+                    showResult(`
+                        <strong>Submitted successfully!</strong> File: ${data.filename}
+                        <div class="meta-grid">
+                            <div class="meta-item"><span>Duration:</span> ${m.duration_sec ?? '—'}s</div>
+                            <div class="meta-item"><span>Sample Rate:</span> ${m.sample_rate_khz ?? '—'} kHz</div>
+                            <div class="meta-item"><span>Bitrate:</span> ${m.bitrate_kbps ?? '—'} kbps</div>
+                            <div class="meta-item"><span>Loudness:</span> ${m.loudness_db ?? '—'} dB</div>
+                            <div class="meta-item"><span>Noise:</span> ${m.noise_quality ?? '—'}</div>
+                        </div>
+                    `, true);
+                } else {
+                    showResult(data.error || 'Submission failed.', false);
+                }
+            } catch (err) {
+                showResult('Network error: ' + err.message, false);
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Submit';
+        }
+
+        function showResult(html, success) {
+            const el = document.getElementById('result');
+            el.className = 'result ' + (success ? 'success' : 'error');
+            el.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
