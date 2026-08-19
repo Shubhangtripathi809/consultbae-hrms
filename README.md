@@ -175,29 +175,17 @@ python app.py
 
 ## Stuck Log
 
-### 1. CTC field — numbers vs lakhs
+### 1. CTC field made no sense at first
 
-**The problem:** Source 1's `Current CTC` column had values like `417964` and `4.2` in the same column. At first I parsed everything as raw numbers, which made `4.2` look like ₹4.2/year.
+Source 1 had CTC values like 417964 and then suddenly 4.2. I thought the data was broken. After staring at it and Googling "Naukri CTC format", it clicked — 4.2 means 4.2 lakhs. Indian job portals do this. So I made a simple rule: under 100 = lakhs, multiply by 1 lakh. Not perfect, but works for tech salaries. Logged every conversion for safety.
 
-**How I got unstuck:** I looked at a handful of values manually. The bimodal distribution was obvious: some were 6-digit numbers (annual salary in rupees), others were single-digit floats (lakhs). Indian job portals typically show CTC in lakhs per annum. I set a threshold: if the value is < 100, it's in lakhs → multiply by 100,000. This isn't perfect (someone earning ₹90 annual would be misclassified, but that's not realistic for tech roles). I logged every conversion in `data_notes` so it can be audited.
+### 2. One row in source 2 was completely messed up
 
-**What I rejected:** I considered asking the "user" to clarify, but in a real pipeline you won't always have that luxury. The heuristic approach with logging felt more practical.
+Spent the most time on this. One row had skills like "react, javascript, mysql" sitting in the email column — everything was shifted left. First thought was to just skip it, but didn't want to lose a real person's data. So I added a check — if email doesn't have @, the row is probably shifted. Re-aligned it programmatically. Verified by comparing with the correct entry above it.
 
-### 2. Source 2 shifted row
+### 3. Source 3 had no email column
 
-**The problem:** One row in `source2_gig_workers.csv` had `"react, javascript, mysql"` as the first field (email_id). Every field was shifted one column to the left — skills had leaked into the email column.
-
-**How I got unstuck:** I noticed it when validating emails: a row's `email_id` didn't contain `@`. I checked the raw CSV and saw the quoted comma-separated skills string had been misplaced. The fix was to check if `email_id` contains `@`; if not and it contains commas, shift all columns right by one and use the original email_id value as skill_tags. I verified by printing the fixed row and confirming the email, name, and rate all matched the correct Isha Chopra row above it.
-
-**What I rejected:** I considered just dropping malformed rows, but that loses data. Re-aligning was more work but preserved the record.
-
-### 3. Source 3 has no email — matching by phone
-
-**The problem:** CBNexus contacts have Name + Phone but NO email. The other two sources use email as the primary key. How do you match across?
-
-**How I got unstuck:** I built a phone→email reverse index from sources 1+2 (after normalization). For each source 3 record, I normalize the phone and look it up in the index. If found, I merge into the existing person. If not found, I create a phone-only record. The risk is that two different people could share a phone number (unlikely for mobile numbers in India, but possible for landlines). I accepted this risk because the alternative — name matching — is far less reliable (common Indian names like "Arjun Mehta" appear twice with different phones).
-
-**What I rejected:** Fuzzy name matching (too many false positives with common names like Sharma, Gupta, Mehta). Also considered leaving source 3 unmatched, but that defeats the purpose of the merge.
+This scared me because my whole matching was email-based. Then I realized phone numbers work too — they're unique per person. Built a phone-to-email reverse map from sources 1 and 2, matched source 3 against it. Rejected name matching after seeing two "Arjun Mehta" with different phones — clearly different people.
 
 ---
 
